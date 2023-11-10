@@ -1,0 +1,76 @@
+{
+  "name": "@khulnasoft/lambda-node-opentelemetry",
+  "version": "0.3.2",
+  "description": "OpenTelemetry auto tracer for Node.JS based AWS Lambda functions",
+  "types": "index.d.ts",
+  "exports": {
+    "require": "./index.cjs",
+    "import": "./index.mjs"
+  },
+  "keywords": [
+    "nodejs",
+    "aws-lambda",
+    "serverless",
+    "opentelemetry"
+  ],
+  "files": [
+    "lambda-wrapper.cjs",
+    "index.mjs",
+    "index.cjs",
+    "index.d.ts"
+  ],
+  "type": "module",
+  "scripts": {
+    "tsc": "tsc  --declaration --emitDeclarationOnly --p ./tsconfig.json",
+    "build:handler": "npm run build:esm && npm run build:cjs",
+    "build:esm": "esbuild src/handler.mjs --bundle --minify --platform=node --target=node18 --outfile=dist/handler.mjs --metafile=meta.json --format=esm",
+    "build:cjs": "esbuild src/handler.cjs --bundle --minify --platform=node --target=node18 --outfile=dist/handler.cjs --metafile=meta.json --format=cjs",
+    "distribute": "mkdir -p layer-dir/nodejs/node_modules/@khulnasoft/lambda-node-opentelemetry && cp -r dist/* layer-dir/nodejs/node_modules/@khulnasoft/lambda-node-opentelemetry",
+    "build:tracer": "esbuild src/lambda-wrapper.ts --bundle --minify --platform=node --target=node18 --format=cjs --outfile=dist/lambda-wrapper.cjs --metafile=meta.json",
+    "build:wrappercjs": "esbuild src/index.ts --bundle --minify --platform=node --target=node18 --format=cjs --outfile=dist/index.cjs --metafile=meta.json",
+    "build:wrapperesm": "esbuild src/index.ts --bundle --minify --platform=node --target=node18 --format=esm --outfile=dist/index.mjs --metafile=meta.json",
+    "build": "npm run build:handler && npm run build:tracer && npm run build:wrappercjs && npm run build:wrapperesm && npm run tsc && npm run distribute",
+    "deploy": "sst deploy",
+    "deploy:uat": "npm run build && npx tsx multi-region-deploy.ts uat",
+    "deploy:prod": "npm run build && npx tsx multi-region-deploy.ts prod",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "release": "release-it"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khulnasoft/lambda-node-opentelemetry.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/khulnasoft/lambda-node-opentelemetry/issues"
+  },
+  "homepage": "https://github.com/khulnasoft/lambda-node-opentelemetry#readme",
+  "devDependencies": {
+    "@release-it/keep-a-changelog": "^4.0.0",
+    "@tsconfig/node16": "^1.0.4",
+    "@types/flat": "^5.0.2",
+    "@types/node": "^20.1.7",
+    "aws-cdk-lib": "^2.106.0",
+    "constructs": "10.1.156",
+    "esbuild": "^0.17.19",
+    "release-it": "^16.2.1",
+    "serverless-webpack": "^5.13.0",
+    "sst": "^2.12.0",
+    "typescript": "^5.2.2",
+    "vite": "^4.3.9",
+    "vitest": "^0.32.2"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.4.1",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.40.0",
+    "@opentelemetry/instrumentation": "^0.45.1",
+    "@opentelemetry/instrumentation-aws-lambda": "^0.35.2",
+    "@opentelemetry/instrumentation-aws-sdk": "^0.34.2",
+    "@opentelemetry/instrumentation-http": "^0.45.1",
+    "@opentelemetry/sdk-trace-base": "^1.14.0",
+    "@opentelemetry/sdk-trace-node": "^1.14.0",
+    "flat": "^5.0.2"
+  }
+}
