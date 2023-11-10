@@ -96,7 +96,7 @@ jobs:
         run: |
           echo ::set-output name=current_version::${GITHUB_REF#refs/tags/v}
       - name: Post to the community Slack channel
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: 'C04KT9JNRHS'
           payload: |
