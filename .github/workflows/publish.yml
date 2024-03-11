@@ -76,7 +76,7 @@ jobs:
           echo "" >> checksums.md
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           prerelease: false
           body_path: checksums.md
